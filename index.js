@@ -29,9 +29,10 @@ app.get('/', function (req, res) {
 })
 
 const token = "abcd-efgh-ijkl-mnop-qrst-uvwx-yz";
-
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 // for facebook verification
 app.get('/webhook/', function (req, res) {
+
 	if (req.query['hub.verify_token'] === token) {
 		res.send(req.query['hub.challenge'])
 	} else {
@@ -41,6 +42,7 @@ app.get('/webhook/', function (req, res) {
 
 // to post data
 app.post('/webhook/', function (req, res) {
+    console.log(req.body);
 	let messaging_events = req.body.entry[0].messaging
 	for (let i = 0; i < messaging_events.length; i++) {
 		let event = req.body.entry[0].messaging[i]
@@ -56,7 +58,7 @@ app.post('/webhook/', function (req, res) {
 		}
 		if (event.postback) {
 			let text = JSON.stringify(event.postback)
-			sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+			sendTextMessage(sender, "Postback received: "+text.substring(0, 200), PAGE_ACCESS_TOKEN)
 			continue
 		}
 	}
@@ -73,7 +75,7 @@ function sendTextMessage(sender, text) {
 	
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
-		qs: {access_token:token},
+		qs: {access_token:PAGE_ACCESS_TOKEN},
 		method: 'POST',
 		json: {
 			recipient: {id:sender},
@@ -122,7 +124,7 @@ function sendGenericMessage(sender) {
 	}
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
-		qs: {access_token:token},
+		qs: {access_token:PAGE_ACCESS_TOKEN},
 		method: 'POST',
 		json: {
 			recipient: {id:sender},
