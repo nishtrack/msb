@@ -14,6 +14,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
+const bot_token= 'test'; // type here your verification token
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -138,6 +139,38 @@ function sendGenericMessage(sender) {
 		}
 	})
 }
+
+app.get('/bot', (req, res) => {
+    // check if verification token is correct
+    if (req.query.token !== bot_token) {
+        return res.sendStatus(401);
+    }
+
+    // return challenge
+    return res.end(req.query.challenge);
+});
+
+app.post('/bot', (req, res) => {
+    // check if verification token is correct
+    if (req.query.token !== bot_token) {
+        return res.sendStatus(401);
+    }
+  
+    // print request body
+    console.log(req.body);
+
+    // return a text response
+    const data = {
+        responses: [
+            {
+                type: 'text',
+                elements: ['Hi', 'Hello']
+            }
+        ]
+    };
+
+    res.json(data);
+});
 
 // spin spin sugar
 app.listen(app.get('port'), function() {
