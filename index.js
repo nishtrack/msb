@@ -166,7 +166,8 @@ app.post('/bot', (req, res) => {
                 type: 'text',
                 elements: ['Hi', 'Hello']
             }
-        ]
+		],
+		body:req.body
     };
 
     res.json(data);
